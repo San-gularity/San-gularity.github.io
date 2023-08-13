@@ -1,0 +1,151 @@
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #f2f2f2;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #004d4d;
+}
+
+h2 {
+    color: #006666;
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group input, .input-group select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    margin-right: 10px;
+    border-radius: 4px;
+    width: 70%;
+    margin-bottom: 10px;
+}
+
+.input-group button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background: linear-gradient(to bottom, #00cccc, #008080);
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: background 0.3s;
+}
+
+.input-group button:hover {
+    background: linear-gradient(to bottom, #008080, #00cccc);
+}
+
+.table-container {
+    margin-top: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #ccc;
+}
+
+th, td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #f2f2f2;
+    color: #004d4d;
+}
+
+.remove-button {
+    background: linear-gradient(to bottom, #ff9999, #ff0000);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 5px 10px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: background 0.3s;
+}
+
+.remove-button:hover {
+    background: linear-gradient(to bottom, #ff0000, #ff6666);
+}
+
+.navbar {
+    background: linear-gradient(to bottom, #00cccc, #008080);
+    color: white;
+    padding: 10px 0;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.navbar h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+/* Media query for smaller screens */
+@media screen and (max-width: 600px) {
+    .container {
+        padding: 10px;
+    }
+
+    .input-group input, .input-group select, .input-group button {
+        width: 100%;
+    }
+}
+
+/* ... (previous CSS code) ... */
+
+/* Individual Shares Table */
+#sharesTable {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #f2f2f2;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+#sharesTable h2 {
+    margin-bottom: 20px;
+    color: #ff4d4d; /* Light red heading color */
+}
+
+#sharesTable table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #ccc;
+}
+
+#sharesTable th, #sharesTable td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+#sharesTable th {
+    background-color: #00cccc; /* Light red table header color */
+    color: white;
+}
+
+#sharesTable td {
+    background-color: white;
+}
+
+
