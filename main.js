@@ -115,6 +115,11 @@ function tile(app) {
   const meta = el('div', 'tile__meta');
   if (app.year) meta.append(el('span', 'tile__year', app.year));
   if (app.kind) meta.append(el('span', 'tile__kind', app.kind));
+  if (app.noAi) {
+    const stamp = el('span', 'tile__noai', 'No AI');
+    stamp.title = 'Written without AI assistance';
+    meta.append(stamp);
+  }
   if (meta.childNodes.length) card.append(meta);
 
   if (app.blurb) card.append(el('p', 'tile__blurb', app.blurb));
@@ -156,7 +161,10 @@ function renderLinks() {
   const spacer = nav.querySelector('.nav__spacer');
   for (const chip of chips) {
     const href = safeHref(chip.href);
-    if (href) nav.insertBefore(link(href, 'chip', chip.label), spacer);
+    // Resume has no card on the shelf any more — this chip is how you reach it,
+    // so it gets the filled treatment rather than blending into the row.
+    const cls = chip.label === 'Resume' ? 'chip chip--primary' : 'chip';
+    if (href) nav.insertBefore(link(href, cls, chip.label), spacer);
   }
 
   for (const app of APPS) {
