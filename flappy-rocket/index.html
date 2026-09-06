@@ -127,7 +127,7 @@
 
   <div class="stage">
     <div id="unity-container">
-      <canvas id="unity-canvas" width="540" height="960" tabindex="-1"></canvas>
+      <canvas id="unity-canvas" width="960" height="540" tabindex="-1"></canvas>
       <div id="unity-loading-bar">
         <div class="loading-label">Loading</div>
         <div id="unity-progress-bar-empty"><div id="unity-progress-bar-full"></div></div>
@@ -165,12 +165,12 @@
       streamingAssetsUrl: "StreamingAssets",
       companyName: "Singularity",
       productName: "Flappy Rocket",
-      productVersion: "0.0.11",
+      productVersion: "0.0.12",
       showBanner: unityShowBanner,
     };
 
     // Fit the canvas to whatever space is left, keeping the game's aspect ratio.
-    var aspect = 540 / 960;
+    var aspect = 960 / 540;
     function resize() {
       var stage = document.querySelector(".stage");
       var availW = stage.clientWidth - 24;
