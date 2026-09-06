@@ -106,8 +106,8 @@ function renderShelf() {
   shelf.replaceChildren(...cards);
 
   const count = cards.length;
-  const label = document.querySelector('[data-count]');
-  if (label) label.textContent = `${count} ${count === 1 ? 'cartridge' : 'cartridges'}`;
+  const text = `${count} ${count === 1 ? 'cartridge' : 'cartridges'}`;
+  for (const label of document.querySelectorAll('[data-count]')) label.textContent = text;
   return count;
 }
 

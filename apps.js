@@ -32,7 +32,8 @@ export const APPS = [
     status: 'live',
     kind: 'Web app',
     year: 2026,
-    theme: { bg: '#f6f7fb', ink: '#10131a', muted: '#5b6474', accent: '#4f46e5' },
+    theme: { bg: '#0b0e14', ink: '#eef1f7', muted: '#97a1b4', accent: '#7c7cf9' },
+    art: './assets/split-the-bill.jpg',
   },
   {
     name: 'Leetion',
@@ -43,7 +44,17 @@ export const APPS = [
     kind: 'Chrome extension',
     year: 2026,
     theme: { bg: '#141a2e', ink: '#e8ecf7', muted: '#98a2c0', accent: '#ffa116' },
-    art: './assets/leetion.png',
+    art: './assets/leetion.jpg',
+  },
+  {
+    name: 'Clown GPT',
+    url: 'https://chromewebstore.google.com/detail/clown-gpt-chatgpt-copy-bl/ohdffmcikkokalnfobnpbipkicimkppg',
+    icon: '🤡',
+    blurb: 'Blocks copying on ChatGPT and roasts you for trying.',
+    status: 'live',
+    kind: 'Chrome extension',
+    year: 2025,
+    theme: { bg: '#151517', ink: '#ececf1', muted: '#a1a5ad', accent: '#ff5a5f' },
   },
   {
     name: 'Space-Boy',
@@ -76,6 +87,7 @@ export const APPS = [
     kind: 'Portfolio',
     year: 2025,
     theme: { bg: '#050509', ink: '#e2e8f0', muted: '#94a3b8', accent: '#d4af37' },
+    art: './assets/sans-archive.jpg',
   },
 ];
 

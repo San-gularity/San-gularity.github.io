@@ -25,6 +25,8 @@
   --frame: #0b0e14;
   --hill: #7ec850;
   --hill-dark: #4f9c2e;
+  --bar-bg: #fffdf7;
+  --bar-shadow: rgba(11, 14, 20, 0.12);
   --live-fill: #43c86a;
   --live-text: #06210d;
 
@@ -59,6 +61,8 @@
   --frame: #f3f4f6;
   --hill: #2f6b34;
   --hill-dark: #1e4722;
+  --bar-bg: #12151d;
+  --bar-shadow: rgba(0, 0, 0, 0.5);
   --live-fill: #56e084;
   --live-text: #06210d;
 }
@@ -122,17 +126,96 @@ a:hover {
 .wrap {
   max-width: 1024px;
   margin: 0 auto;
-  padding: 0 var(--pad) 96px;
+  padding: 28px var(--pad) 96px;
 }
 
 /* ---- nav ---- */
+
+/* ---- top bar ---------------------------------------------------------- */
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--bar-bg);
+  border-bottom: 4px solid var(--frame);
+  box-shadow: 0 4px 0 var(--bar-shadow);
+}
+.topbar__inner {
+  max-width: 1024px;
+  margin: 0 auto;
+  padding: 10px var(--pad);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex: none;
+  color: var(--ink);
+}
+.brand:hover { color: var(--ink); }
+.brand__coin {
+  width: 18px;
+  height: 18px;
+  image-rendering: pixelated;
+  flex: none;
+}
+.brand:hover .brand__coin { animation: coin-bob 0.5s steps(2, end) 2; }
+.brand__name {
+  font-family: var(--px);
+  font-size: 11px;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* On a phone the wordmark alone earns the space; the links wrap under it. */
+@media (max-width: 640px) {
+  .topbar { position: static; }
+  .topbar__inner { flex-wrap: wrap; gap: 10px; }
+  .brand__name { font-size: 10px; }
+  .nav { width: 100%; }
+}
+
+/* ---- section divisions ------------------------------------------------- */
+
+.section-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 8px 0 20px;
+}
+.section-head__title {
+  margin: 0;
+  font-family: var(--px);
+  font-size: 12px;
+  line-height: 1;
+  color: var(--ink);
+}
+.section-head__rule {
+  flex: 1 1 auto;
+  height: 4px;
+  background-image: linear-gradient(to right, var(--frame) 50%, transparent 50%);
+  background-size: 8px 4px;
+  opacity: 0.5;
+}
+.section-head__count {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+}
 
 .nav {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
-  padding-top: 24px;
 }
 .nav__spacer {
   flex: 1 1 auto;
@@ -356,18 +439,18 @@ a:hover {
   background-position: right bottom;
   background-repeat: no-repeat;
   background-size: cover;
-  opacity: 0.3;
-  -webkit-mask-image: linear-gradient(to top left, #000 0%, rgba(0, 0, 0, 0.6) 38%, transparent 82%);
-  mask-image: linear-gradient(to top left, #000 0%, rgba(0, 0, 0, 0.6) 38%, transparent 82%);
+  opacity: 0.55;
+  -webkit-mask-image: linear-gradient(to top left, #000 0%, rgba(0, 0, 0, 0.82) 40%, rgba(0, 0, 0, 0.25) 72%, transparent 92%);
+  mask-image: linear-gradient(to top left, #000 0%, rgba(0, 0, 0, 0.82) 40%, rgba(0, 0, 0, 0.25) 72%, transparent 92%);
   transition: opacity 140ms steps(2, end), transform 140ms steps(2, end);
 }
 .tile--pixel .tile__art {
   image-rendering: pixelated;
-  opacity: 0.38;
+  opacity: 0.62;
 }
 .tile:hover .tile__art,
 .tile:focus-visible .tile__art {
-  opacity: 0.5;
+  opacity: 0.75;
   transform: scale(1.04);
 }
 @media (prefers-reduced-motion: reduce) {
@@ -415,6 +498,11 @@ a:hover {
   padding: 4px 6px;
   color: var(--tile-accent, var(--accent));
   border: 1px solid currentColor;
+}
+.tile--art .tile__name,
+.tile--art .tile__blurb,
+.tile--art .tile__meta {
+  text-shadow: 0 1px 3px var(--tile-bg, var(--bg)), 0 0 10px var(--tile-bg, var(--bg));
 }
 .tile__blurb {
   margin: 0;

@@ -1,71 +1,93 @@
-# san-gularity.github.io
+# San's Playground
 
-The front door. A single page listing the things I've built for the browser, so they're
-all reachable from one place instead of scattered across repo URLs.
+Personal landing site and project index, hosted at
+**[san-gularity.github.io](https://san-gularity.github.io/)**.
 
-Live at **https://san-gularity.github.io/**
+It serves as the front page for everything I've built for the browser, and as the root of
+the domain that the individual project sites are published under.
 
-## How it fits together
+## Projects listed
 
-This is a GitHub **user site** (the repo name matches the username), which is what puts it
-at the domain root. Every toy keeps its own repo and publishes as a project site:
+| Project | Type | Location |
+|---|---|---|
+| Split the Bill | Web app | [`/FoodBillCalculator/`](https://san-gularity.github.io/FoodBillCalculator/) |
+| Leetion | Chrome extension | [Chrome Web Store](https://chromewebstore.google.com/detail/leetcode-to-notion/kdlncolgahgakhkfaipeillkppfhooag) |
+| Clown GPT | Chrome extension | [Chrome Web Store](https://chromewebstore.google.com/detail/clown-gpt-chatgpt-copy-bl/ohdffmcikkokalnfobnpbipkicimkppg) |
+| Space-Boy | Unity game | [itch.io](https://san-gularity.itch.io/space-boy) |
+| Delta RAG | Data pipeline | [GitHub](https://github.com/San-gularity/delta_RAG_pipeline) |
+| Sans Archive | Portfolio | [`/San-gularity/`](https://san-gularity.github.io/San-gularity/) |
+
+## Technology
+
+Static HTML, CSS and vanilla JavaScript (ES modules). No framework, no build step, no
+dependencies, no analytics. The only external resource is the Google Fonts stylesheet.
+
+## Repository layout
 
 ```
-san-gularity.github.io/            this repo — the hub
-  /FoodBillCalculator/             Split the Bill
-  /San-gularity/                   Sans Archive (portfolio)
-  /<next-toy>/                     one repo per toy
+index.html      landing page
+404.html        error page, served for any unmatched path on the domain
+styles.css      styles and theme tokens (light and dark)
+apps.js         project registry and profile links
+main.js         renders the project grid from the registry
+climber.js      decorative cursor animation
+assets/         project thumbnails
+resume.pdf      linked from the header and footer
 ```
 
-Because the hub sits at the root, setting a custom domain here later moves every app with
-it — nothing else needs changing.
-
-## Adding a new toy
-
-1. Build it in its own **public** repo, static files at the root, with a `.nojekyll` file.
-2. Repo → Settings → Pages → Deploy from a branch → `main` / (root).
-3. Append one entry to [`apps.js`](apps.js) and push. That's it.
-
-For a React/Vite app: set `base: '/<repo-name>/'` in `vite.config.js`, switch Pages source
-to **GitHub Actions**, and use `HashRouter` (or copy `index.html` to `404.html` at build
-time) so deep links resolve.
-
-## Four rules that keep this from breaking
-
-Every app shares one origin, so they can step on each other:
-
-1. **Namespace browser storage.** A bare `localStorage.setItem('score', …)` in two games
-   collides. Prefix everything (`snake:score`), the way the bill app uses `fbs:` and an
-   IndexedDB named `food-bill-splitter`.
-2. **Relative paths only.** `href="styles.css"`, never `href="/styles.css"` — apps live at
-   a subpath.
-3. **Cache-bust on deploy.** Bump `?v=YYYY-MM-DD` on the `<link>` and `<script>` tags in
-   `index.html`, or browsers serve yesterday's CSS.
-4. **`.nojekyll` in every repo**, so files are served exactly as committed.
-
-## What's in here
-
-| File | |
-|---|---|
-| `index.html` | The shelf page |
-| `404.html` | Served for any missing path on the whole domain |
-| `styles.css` | The retro cartridge theme, dark + light |
-| `apps.js` | The registry — **the only file you edit to add a toy** |
-| `main.js` | Renders the shelf from the registry |
-
-The design came from Claude Design ("Playground Hub"). Two deliberate departures from
-the prototype: its floating "Preview 404" button was a design-tool affordance and is not
-here (the 404 is a real page), and links whose value is `null` in `apps.js` are not
-rendered at all, so the page can never show a dead link.
-
-## Running it locally
+## Local development
 
 ```bash
-python3 -m http.server 4173      # then open http://localhost:4173
+python3 -m http.server 4180
+# http://localhost:4180
 ```
 
-## Notes
+## Deployment
 
-Static HTML, CSS and vanilla JS — no build step, no dependencies, no tracking, no backend.
-Nothing here reads or stores personal data, and no secrets belong in this repo: it is
-public, and everything served from it is visible to anyone.
+GitHub Pages builds from the `main` branch, root directory. Pushing to `main` publishes.
+
+Because this repository is named after the account, it is published at the domain root,
+and every other repository with Pages enabled is served beneath it as
+`san-gularity.github.io/<repository>/`. A custom domain configured here would apply to all
+of them.
+
+After changing `styles.css` or any script, increment the `?v=` query string on the `<link>`
+and `<script>` tags in `index.html` and `404.html`. Without it, browsers may serve a cached
+copy of the previous deployment.
+
+## Adding a project
+
+1. Publish it (GitHub Pages, Chrome Web Store, itch.io — anywhere with a public URL).
+2. Add an entry to the `APPS` array in `apps.js`:
+
+```js
+{
+  name: 'Project name',
+  url: 'https://example.com/',
+  icon: '🎮',
+  blurb: 'One sentence describing it.',
+  status: 'live',              // 'live' | 'wip' | 'new'
+  kind: 'Web app',             // free-text label shown on the card
+  year: 2026,
+  theme: { bg: '#0b0e14', ink: '#f3f4f6', muted: '#9ca3af', accent: '#7c7cf9' },
+  art: './assets/name.jpg',    // optional screenshot
+}
+```
+
+3. Commit and push.
+
+Card colours must be hex values and `art` must be a relative path inside `assets/`; both
+are validated in `main.js` and ignored otherwise. Registry text is inserted via
+`textContent`, never as HTML.
+
+## Conventions for projects hosted under this domain
+
+All project sites share the `san-gularity.github.io` origin, which has two consequences:
+
+- **Browser storage is shared.** Namespace all keys (`projectname:setting`). Split the Bill
+  uses the `fbs:` prefix and an IndexedDB database named `food-bill-splitter`.
+- **Asset paths must be relative.** Use `href="styles.css"`, not `href="/styles.css"`, since
+  each project is served from a subdirectory.
+
+Each project repository should also contain an empty `.nojekyll` file so that GitHub Pages
+serves its files unprocessed.
