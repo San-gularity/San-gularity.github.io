@@ -52,11 +52,27 @@ function safeArt(value) {
     : null;
 }
 
+/** Secondary destinations: [{label, url}], each validated like any other href. */
+function safeLinks(value) {
+  if (!Array.isArray(value)) return [];
+  return value
+    .map((entry) => {
+      if (!entry || typeof entry.label !== 'string' || !entry.label.trim()) return null;
+      const href = safeHref(entry.url);
+      return href ? { label: entry.label.trim(), href } : null;
+    })
+    .filter(Boolean);
+}
+
 function tile(app) {
   const href = safeHref(app.url);
   if (!href || !app.name) return null;
 
-  const card = link(href, 'tile');
+  // The card is an <article>, not an <a>: it can hold its own links, and a link
+  // inside a link is invalid HTML. The title's anchor is stretched over the
+  // whole card in CSS, so clicking anywhere still opens the primary URL while
+  // the buttons along the bottom stay clickable on top of it.
+  const card = el('article', 'tile');
 
   // Each card wears the palette of the thing it opens, so the shelf previews
   // what you're about to walk into.
@@ -85,11 +101,16 @@ function tile(app) {
   icon.setAttribute('aria-hidden', 'true');
   top.append(icon);
 
+  // 'none' is for things that aren't really releases — a PDF, say.
   const status = String(app.status || 'live').toLowerCase();
-  if (BADGES[status]) top.append(el('span', `badge badge--${status}`, BADGES[status]));
+  if (status !== 'none' && BADGES[status]) {
+    top.append(el('span', `badge badge--${status}`, BADGES[status]));
+  }
   card.append(top);
 
-  card.append(el('h2', 'tile__name', app.name));
+  const name = el('h2', 'tile__name');
+  name.append(link(href, 'tile__primary', app.name));
+  card.append(name);
 
   const meta = el('div', 'tile__meta');
   if (app.year) meta.append(el('span', 'tile__year', app.year));
@@ -97,6 +118,14 @@ function tile(app) {
   if (meta.childNodes.length) card.append(meta);
 
   if (app.blurb) card.append(el('p', 'tile__blurb', app.blurb));
+
+  const extras = safeLinks(app.links);
+  if (extras.length) {
+    const row = el('div', 'tile__links');
+    for (const extra of extras) row.append(link(extra.href, 'tile__link', extra.label));
+    card.append(row);
+  }
+
   return card;
 }
 

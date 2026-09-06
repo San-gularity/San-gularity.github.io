@@ -396,8 +396,8 @@ a:hover {
 
 .shelf {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 28px;
   align-items: stretch;
 }
 
@@ -410,8 +410,8 @@ a:hover {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  min-height: 200px;
-  padding: 24px;
+  min-height: 280px;
+  padding: 28px;
   background: var(--tile-bg, var(--bg));
   color: var(--tile-ink, var(--ink));
   border: 3px solid var(--tile-accent, var(--accent));
@@ -420,7 +420,7 @@ a:hover {
   transition: transform 90ms steps(2, end), box-shadow 90ms steps(2, end);
 }
 .tile:hover,
-.tile:focus-visible {
+.tile:focus-within {
   color: var(--tile-ink, var(--ink));
   transform: translate(-3px, -3px);
   box-shadow: 9px 9px 0 var(--tile-accent, var(--accent));
@@ -449,13 +449,13 @@ a:hover {
   opacity: 0.62;
 }
 .tile:hover .tile__art,
-.tile:focus-visible .tile__art {
+.tile:focus-within .tile__art {
   opacity: 0.75;
   transform: scale(1.04);
 }
 @media (prefers-reduced-motion: reduce) {
   .tile:hover .tile__art,
-  .tile:focus-visible .tile__art { transform: none; }
+  .tile:focus-within .tile__art { transform: none; }
 }
 
 .tile__top {
@@ -476,11 +476,54 @@ a:hover {
   color: var(--tile-ink, var(--ink));
   text-wrap: pretty;
 }
+/* The title is the card's real link. Its ::after covers the whole card, so a
+   click anywhere opens it — except on .tile__links, which sit above it. */
+.tile__primary {
+  color: inherit;
+  text-decoration: none;
+}
+.tile__primary::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
 .tile__meta {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
+}
+
+/* Other places the thing lives: source, a store page, an itch.io listing.
+   margin-top:auto pins the row to the bottom however long the blurb runs. */
+.tile__links {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 4px;
+}
+.tile__link {
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 7px 11px;
+  color: var(--tile-ink, var(--ink));
+  background: var(--tile-bg, var(--bg));
+  border: 2px solid var(--tile-accent, var(--accent));
+  transition: background 90ms steps(2, end), color 90ms steps(2, end);
+}
+.tile__link:hover,
+.tile__link:focus-visible {
+  color: var(--tile-bg, var(--bg));
+  background: var(--tile-accent, var(--accent));
 }
 .tile__year {
   font-family: var(--mono);
@@ -501,7 +544,8 @@ a:hover {
 }
 .tile--art .tile__name,
 .tile--art .tile__blurb,
-.tile--art .tile__meta {
+.tile--art .tile__meta,
+.tile--art .tile__links {
   text-shadow: 0 1px 3px var(--tile-bg, var(--bg)), 0 0 10px var(--tile-bg, var(--bg));
 }
 .tile__blurb {
