@@ -40,11 +40,45 @@ function link(href, className, text) {
 
 const BADGES = { live: 'Live', wip: 'Wip', new: 'New' };
 
+/** Hex colours only — these end up in a style attribute. */
+function safeColor(value) {
+  return typeof value === 'string' && /^#[0-9a-f]{3,8}$/i.test(value.trim()) ? value.trim() : null;
+}
+
+/** Card art must be a relative file in this repo, never a remote URL. */
+function safeArt(value) {
+  return typeof value === 'string' && /^\.\/[\w./-]+\.(png|jpe?g|webp|gif|avif)$/i.test(value.trim())
+    ? value.trim()
+    : null;
+}
+
 function tile(app) {
   const href = safeHref(app.url);
   if (!href || !app.name) return null;
 
   const card = link(href, 'tile');
+
+  // Each card wears the palette of the thing it opens, so the shelf previews
+  // what you're about to walk into.
+  const theme = app.theme || {};
+  for (const [token, value] of Object.entries({
+    '--tile-bg': safeColor(theme.bg),
+    '--tile-ink': safeColor(theme.ink),
+    '--tile-muted': safeColor(theme.muted),
+    '--tile-accent': safeColor(theme.accent),
+  })) {
+    if (value) card.style.setProperty(token, value);
+  }
+
+  const art = safeArt(app.art);
+  if (art) {
+    card.classList.add('tile--art');
+    if (app.pixelArt) card.classList.add('tile--pixel');
+    const layer = el('span', 'tile__art');
+    layer.setAttribute('aria-hidden', 'true');
+    layer.style.backgroundImage = `url("${encodeURI(art)}")`;
+    card.append(layer);
+  }
 
   const top = el('div', 'tile__top');
   const icon = el('span', 'tile__icon', app.icon || '🎮');
@@ -56,7 +90,12 @@ function tile(app) {
   card.append(top);
 
   card.append(el('h2', 'tile__name', app.name));
-  if (app.year) card.append(el('div', 'tile__year', app.year));
+
+  const meta = el('div', 'tile__meta');
+  if (app.year) meta.append(el('span', 'tile__year', app.year));
+  if (app.kind) meta.append(el('span', 'tile__kind', app.kind));
+  if (meta.childNodes.length) card.append(meta);
+
   if (app.blurb) card.append(el('p', 'tile__blurb', app.blurb));
   return card;
 }

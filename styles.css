@@ -25,8 +25,8 @@
   --frame: #0b0e14;
   --hill: #7ec850;
   --hill-dark: #4f9c2e;
-  --live-fill: #1f7a34;
-  --live-text: #ffffff;
+  --live-fill: #43c86a;
+  --live-text: #06210d;
 
   --px: 'Press Start 2P', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -59,7 +59,7 @@
   --frame: #f3f4f6;
   --hill: #2f6b34;
   --hill-dark: #1e4722;
-  --live-fill: #2fa84a;
+  --live-fill: #56e084;
   --live-text: #06210d;
 }
 
@@ -318,28 +318,61 @@ a:hover {
   align-items: stretch;
 }
 
+/* Each card falls back to the page palette, but apps.js can hand it the colours
+   of the thing it opens — so the shelf previews what's behind each door. */
 .tile {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   gap: 12px;
   min-height: 200px;
   padding: 24px;
-  background: var(--bg);
-  color: var(--ink);
-  border: 3px solid var(--accent);
-  box-shadow: 6px 6px 0 var(--accent);
+  background: var(--tile-bg, var(--bg));
+  color: var(--tile-ink, var(--ink));
+  border: 3px solid var(--tile-accent, var(--accent));
+  box-shadow: 6px 6px 0 var(--tile-accent, var(--accent));
   cursor: pointer;
   transition: transform 90ms steps(2, end), box-shadow 90ms steps(2, end);
 }
 .tile:hover,
 .tile:focus-visible {
-  color: var(--ink);
+  color: var(--tile-ink, var(--ink));
   transform: translate(-3px, -3px);
-  box-shadow: 9px 9px 0 var(--accent);
+  box-shadow: 9px 9px 0 var(--tile-accent, var(--accent));
 }
 .tile:active {
   transform: translate(6px, 6px);
-  box-shadow: 0 0 0 var(--accent);
+  box-shadow: 0 0 0 var(--tile-accent, var(--accent));
+}
+
+/* A screenshot bled into the card: anchored bottom-right, faded out towards the
+   text with a mask so there is no hard edge, and dimmed so the copy still reads. */
+.tile__art {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-position: right bottom;
+  background-repeat: no-repeat;
+  background-size: cover;
+  opacity: 0.3;
+  -webkit-mask-image: linear-gradient(to top left, #000 0%, rgba(0, 0, 0, 0.6) 38%, transparent 82%);
+  mask-image: linear-gradient(to top left, #000 0%, rgba(0, 0, 0, 0.6) 38%, transparent 82%);
+  transition: opacity 140ms steps(2, end), transform 140ms steps(2, end);
+}
+.tile--pixel .tile__art {
+  image-rendering: pixelated;
+  opacity: 0.38;
+}
+.tile:hover .tile__art,
+.tile:focus-visible .tile__art {
+  opacity: 0.5;
+  transform: scale(1.04);
+}
+@media (prefers-reduced-motion: reduce) {
+  .tile:hover .tile__art,
+  .tile:focus-visible .tile__art { transform: none; }
 }
 
 .tile__top {
@@ -357,22 +390,38 @@ a:hover {
   font-family: var(--px);
   font-size: 14px;
   line-height: 1.4;
-  color: var(--ink);
+  color: var(--tile-ink, var(--ink));
   text-wrap: pretty;
+}
+.tile__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
 }
 .tile__year {
   font-family: var(--mono);
   font-size: 12px;
   line-height: 1;
-  color: var(--muted);
+  color: var(--tile-muted, var(--muted));
   font-variant-numeric: tabular-nums;
+}
+.tile__kind {
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 4px 6px;
+  color: var(--tile-accent, var(--accent));
+  border: 1px solid currentColor;
 }
 .tile__blurb {
   margin: 0;
   flex: 1 1 auto;
   font-size: 14px;
   line-height: 1.5;
-  color: var(--muted);
+  color: var(--tile-muted, var(--muted));
   text-wrap: pretty;
 }
 
@@ -392,9 +441,9 @@ a:hover {
   box-shadow: 2px 2px 0 var(--frame);
 }
 .badge--wip {
-  color: var(--muted);
-  border: 2px solid var(--muted);
-  box-shadow: 2px 2px 0 var(--muted);
+  color: var(--tile-muted, var(--muted));
+  border: 2px solid currentColor;
+  box-shadow: 2px 2px 0 currentColor;
 }
 .badge--new {
   color: var(--new);
@@ -599,6 +648,11 @@ a:hover {
   shape-rendering: crispEdges;
   will-change: transform;
 }
+/* Sprite frames: only one pose is visible at a time. */
+.climber .pose--b { display: none; }
+.climber[data-pose='b'] .pose--a { display: none; }
+.climber[data-pose='b'] .pose--b { display: block; }
+
 .climber__rope {
   position: fixed;
   left: 0;

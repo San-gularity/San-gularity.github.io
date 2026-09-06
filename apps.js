@@ -2,7 +2,8 @@
  * The shelf — the only file you edit to add a toy.
  *
  * Adding one:
- *   1. Deploy it (its own public repo, GitHub Pages, `.nojekyll`, relative asset paths).
+ *   1. Put it somewhere public (its own repo + GitHub Pages, a Chrome store
+ *      listing, itch.io — anywhere with a URL).
  *   2. Append an entry to APPS below.
  *   3. Push.
  *
@@ -11,10 +12,16 @@
  *   url     '/repo-name/' for anything on this domain, or a full https:// URL
  *   icon    one emoji
  *   blurb   one sentence, plain language
- *   status  'live' | 'wip' | 'new'   (drives the badge)
+ *   status  'live' | 'wip' | 'new'      drives the coloured badge
+ *   kind    free text tag ('Chrome extension', 'itch.io', 'GitHub project'…)
  *   year    number
+ *   theme   the card wears the app's own colours: { bg, ink, muted, accent }
+ *           hex values only — anything else is ignored
+ *   art     optional screenshot blended into the card background
+ *   pixelArt  true keeps low-res art crisp instead of smoothing it
  *
- * Everything here is rendered as text, never as HTML, so odd characters are safe.
+ * Text is rendered as text and never as HTML; colours and paths are validated
+ * in main.js before they reach the DOM.
  */
 export const APPS = [
   {
@@ -23,7 +30,42 @@ export const APPS = [
     icon: '🧾',
     blurb: 'Scan a receipt, tap who ate what, pay to the cent.',
     status: 'live',
+    kind: 'Web app',
     year: 2026,
+    theme: { bg: '#f6f7fb', ink: '#10131a', muted: '#5b6474', accent: '#4f46e5' },
+  },
+  {
+    name: 'Leetion',
+    url: 'https://chromewebstore.google.com/detail/leetcode-to-notion/kdlncolgahgakhkfaipeillkppfhooag',
+    icon: '🧩',
+    blurb: 'Save a LeetCode problem straight into Notion, one click.',
+    status: 'live',
+    kind: 'Chrome extension',
+    year: 2026,
+    theme: { bg: '#141a2e', ink: '#e8ecf7', muted: '#98a2c0', accent: '#ffa116' },
+    art: './assets/leetion.png',
+  },
+  {
+    name: 'Space-Boy',
+    url: 'https://san-gularity.itch.io/space-boy',
+    icon: '👾',
+    blurb: 'A 2D platformer, and the first game I ever finished.',
+    status: 'live',
+    kind: 'itch.io',
+    year: 2021,
+    theme: { bg: '#10243d', ink: '#eaf4ff', muted: '#9db6d4', accent: '#fa5c5c' },
+    art: './assets/space-boy.png',
+    pixelArt: true,
+  },
+  {
+    name: 'Delta RAG',
+    url: 'https://github.com/San-gularity/delta_RAG_pipeline',
+    icon: '🧠',
+    blurb: 'Incremental RAG over a corpus with Spark, Delta Lake and Scala.',
+    status: 'live',
+    kind: 'GitHub project',
+    year: 2025,
+    theme: { bg: '#0d1117', ink: '#e6edf3', muted: '#8b949e', accent: '#58a6ff' },
   },
   {
     name: 'Sans Archive',
@@ -31,7 +73,9 @@ export const APPS = [
     icon: '🗃️',
     blurb: 'Past work and portfolio.',
     status: 'live',
+    kind: 'Portfolio',
     year: 2025,
+    theme: { bg: '#050509', ink: '#e2e8f0', muted: '#94a3b8', accent: '#d4af37' },
   },
 ];
 

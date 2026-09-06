@@ -26,14 +26,28 @@ if (!coarsePointer && !stillPlease) {
   climber.setAttribute('class', 'climber');
   climber.setAttribute('viewBox', '0 0 11 14');
   climber.setAttribute('aria-hidden', 'true');
+  // Two poses: hanging still, and scrambling. The body is shared; only the
+  // limbs swap, which is how an 8-bit sprite sheet would do it.
   climber.innerHTML = [
     '<g fill="var(--coin)"><rect x="3" y="0" width="5" height="2"/><rect x="2" y="1" width="7" height="1"/></g>',
     '<g fill="#f0c9a0"><rect x="3" y="2" width="5" height="3"/></g>',
     '<g fill="var(--frame)"><rect x="4" y="3" width="1" height="1"/><rect x="6" y="3" width="1" height="1"/></g>',
     '<g fill="#e0564f"><rect x="2" y="5" width="7" height="1"/></g>',
-    '<g fill="var(--accent)"><rect x="3" y="6" width="5" height="4"/><rect x="2" y="6" width="1" height="3"/><rect x="8" y="6" width="1" height="3"/></g>',
+    '<g fill="var(--accent)"><rect x="3" y="6" width="5" height="4"/></g>',
+
+    // pose A — arms down, legs together (idle dangle)
+    '<g class="pose pose--a">',
+    '<g fill="var(--accent)"><rect x="2" y="6" width="1" height="3"/><rect x="8" y="6" width="1" height="3"/></g>',
     '<g fill="#3c4252"><rect x="3" y="10" width="2" height="3"/><rect x="6" y="10" width="2" height="3"/></g>',
     '<g fill="var(--frame)"><rect x="2" y="13" width="3" height="1"/><rect x="6" y="13" width="3" height="1"/></g>',
+    '</g>',
+
+    // pose B — one arm reaching up the rope, legs kicked apart
+    '<g class="pose pose--b">',
+    '<g fill="var(--accent)"><rect x="2" y="4" width="1" height="3"/><rect x="8" y="6" width="1" height="3"/></g>',
+    '<g fill="#3c4252"><rect x="2" y="10" width="2" height="3"/><rect x="7" y="10" width="2" height="2"/></g>',
+    '<g fill="var(--frame)"><rect x="1" y="13" width="3" height="1"/><rect x="7" y="12" width="3" height="1"/></g>',
+    '</g>',
   ].join('');
 
   document.body.append(rope, climber);
@@ -45,6 +59,9 @@ if (!coarsePointer && !stillPlease) {
   let previousX = x;
   let previousY = y;
   let seen = false;
+  let step = 0;
+  let stepAt = 0;
+  climber.dataset.pose = 'a';
 
   addEventListener(
     'pointermove',
@@ -78,6 +95,21 @@ if (!coarsePointer && !stillPlease) {
     const correction = (distance - ROPE_LENGTH) / distance;
     x -= dx * correction;
     y -= dy * correction;
+
+    // Scramble while there is real movement, hang still once it settles.
+    const speed = Math.hypot(x - previousX, y - previousY);
+    if (speed > 0.6) {
+      const now = performance.now();
+      // Faster movement, faster kicking — but never a strobe.
+      const interval = Math.max(70, 190 - speed * 9);
+      if (now - stepAt > interval) {
+        stepAt = now;
+        step ^= 1;
+        climber.dataset.pose = step ? 'b' : 'a';
+      }
+    } else if (climber.dataset.pose !== 'a') {
+      climber.dataset.pose = 'a';
+    }
 
     // Hang from the rope rather than staying bolt upright.
     const swing = Math.atan2(x - anchorX, y - anchorY) * (180 / Math.PI);
