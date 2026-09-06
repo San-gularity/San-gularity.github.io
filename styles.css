@@ -1,10 +1,35 @@
-/* ---------------------------------------------------------------------------
-   Sanath's Playground — retro cartridge shelf.
-   Built from the Claude Design prototype "Playground Hub".
-   Square corners everywhere, 3px borders, hard offset shadows, no blur.
---------------------------------------------------------------------------- */
-
 :root {
+  /* Light is the default look; the toggle (and a saved choice) switches to dark. */
+  --bg: #f4f3ee;
+  --ink: #0b0e14;
+  --muted: #565d6b;
+  --line: #c9c6bb;
+  --accent: #7c7cf9;
+  --live: #0b0e14;
+  --new: #1c7a10;
+  --newfill: rgba(28, 122, 16, 0.1);
+  --scan: #0b0e14;
+  --shadow-deep: #c9c6bb;
+
+  /* The 8-bit stage: sky, masonry, blocks and coins. */
+  --sky: #bfe3ff;
+  --cloud: #ffffff;
+  --brick: #d98b4a;
+  --mortar: #f4f3ee;
+  --block: #ffcf4d;
+  --block-ink: #8a5a00;
+  --coin: #ffd83d;
+  --coin-ink: #a37b00;
+  --title-ink: #0b0e14;
+  --title-outline: #ffffff;
+
+  --px: 'Press Start 2P', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --pad: clamp(16px, 4vw, 32px);
+}
+
+:root[data-theme='dark'] {
   --bg: #0b0e14;
   --ink: #f3f4f6;
   --muted: #9ca3af;
@@ -16,23 +41,16 @@
   --scan: #ffffff;
   --shadow-deep: #1f2430;
 
-  --px: 'Press Start 2P', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  --pad: clamp(16px, 4vw, 32px);
-}
-
-:root[data-theme='light'] {
-  --bg: #f4f3ee;
-  --ink: #0b0e14;
-  --muted: #565d6b;
-  --line: #c9c6bb;
-  --accent: #7c7cf9;
-  --live: #0b0e14;
-  --new: #1c7a10;
-  --newfill: rgba(28, 122, 16, 0.1);
-  --scan: #0b0e14;
-  --shadow-deep: #c9c6bb;
+  --sky: #16233d;
+  --cloud: #2b3a5c;
+  --brick: #7a4526;
+  --mortar: #0b0e14;
+  --block: #ffcf4d;
+  --block-ink: #4a3000;
+  --coin: #ffd83d;
+  --coin-ink: #4a3000;
+  --title-ink: #ffffff;
+  --title-outline: #0b0e14;
 }
 
 *,
@@ -132,33 +150,143 @@ a:hover {
   color: var(--muted);
 }
 
-/* ---- hero ---- */
+/* ---- the stage: an 8-bit scene instead of a plain header ---- */
 
-.hero {
+.stage {
+  position: relative;
+  margin: 32px 0 48px;
+  border: 3px solid var(--line);
+  box-shadow: 6px 6px 0 var(--line);
+  overflow: hidden;
+  background: var(--sky);
+}
+
+.stage__sky {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.cloud {
+  position: absolute;
+  width: 96px;
+  height: 48px;
+  color: var(--cloud);
+  shape-rendering: crispEdges;
+}
+.cloud--a { top: 12px; left: 4%; }
+.cloud--b { top: 40px; left: 27%; width: 64px; height: 32px; opacity: .9; }
+.cloud--c { top: 16px; left: 52%; width: 48px; height: 24px; opacity: .75; }
+
+/* On a narrow screen the sky band is short — one cloud is enough, and the
+   others would sit behind the title. */
+@media (max-width: 560px) {
+  .cloud--b, .cloud--c { display: none; }
+}
+
+.props {
+  position: absolute;
+  top: 18px;
+  right: clamp(16px, 6vw, 56px);
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+.prop {
+  width: 40px;
+  height: 40px;
+  shape-rendering: crispEdges;
+}
+.prop--coin { width: 26px; height: 26px; animation: coin-bob 1s steps(2, end) infinite; }
+
+@keyframes coin-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.stage__content {
+  position: relative;
+  padding: clamp(56px, 12vw, 96px) clamp(16px, 4vw, 32px) 24px;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 56px 0 48px;
 }
-.hero__title {
+
+.stage__title {
   margin: 0;
   font-family: var(--px);
-  font-size: clamp(16px, 4.2vw, 24px);
-  line-height: 1.2;
+  font-size: clamp(18px, 5.8vw, 42px);
+  line-height: 1.15;
   letter-spacing: 0.02em;
-  color: var(--ink);
+  color: var(--title-ink);
   text-wrap: balance;
+  /* A chunky arcade outline plus one hard accent drop. */
+  text-shadow:
+    -2px 0 0 var(--title-outline),
+    2px 0 0 var(--title-outline),
+    0 -2px 0 var(--title-outline),
+    0 2px 0 var(--title-outline),
+    -2px -2px 0 var(--title-outline),
+    2px -2px 0 var(--title-outline),
+    -2px 2px 0 var(--title-outline),
+    2px 2px 0 var(--title-outline),
+    6px 6px 0 var(--accent);
 }
-.hero__lede {
+
+.stage__lede {
   margin: 0;
-  max-width: 52ch;
+  max-width: 46ch;
   font-size: 17px;
   line-height: 1.5;
-  color: var(--muted);
+  color: var(--title-ink);
   text-wrap: pretty;
 }
 
-/* ---- the shelf ---- */
+.stage__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  align-items: center;
+  margin-top: 4px;
+}
+.stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--px);
+  font-size: 10px;
+  line-height: 1;
+  color: var(--title-ink);
+  background: var(--bg);
+  border: 2px solid var(--line);
+  box-shadow: 3px 3px 0 var(--line);
+  padding: 8px 10px;
+}
+.stat__coin {
+  width: 12px;
+  height: 12px;
+  shape-rendering: crispEdges;
+}
+
+/* Two rows of offset masonry, so the stage stands on something. */
+.stage__ground {
+  position: relative;
+  display: grid;
+}
+.stage__ground span {
+  display: block;
+  height: 14px;
+  background-color: var(--brick);
+  background-image:
+    linear-gradient(90deg, var(--mortar) 0 2px, transparent 2px),
+    linear-gradient(var(--mortar) 0 2px, transparent 2px);
+  background-size: 28px 14px, 28px 14px;
+}
+.stage__ground span:nth-child(2) {
+  background-position: 14px 0, 0 0;
+}
+
+/* ---- the shelf ---- *//* ---- the shelf ---- */
 
 .shelf {
   display: grid;
@@ -276,10 +404,21 @@ a:hover {
   align-items: flex-start;
 }
 .footer__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-family: var(--px);
   font-size: 10px;
   line-height: 1;
   color: var(--muted);
+}
+.footer__head::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  flex: none;
+  background: var(--accent);
+  box-shadow: 2px 2px 0 var(--line);
 }
 .footer__link {
   font-size: 14px;
@@ -396,6 +535,24 @@ a:hover {
   transform: translate(6px, 6px);
   box-shadow: 0 0 0 var(--accent);
 }
+
+.notfound__ground {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: grid;
+}
+.notfound__ground span {
+  display: block;
+  height: 14px;
+  background-color: var(--brick);
+  background-image:
+    linear-gradient(90deg, var(--mortar) 0 2px, transparent 2px),
+    linear-gradient(var(--mortar) 0 2px, transparent 2px);
+  background-size: 28px 14px, 28px 14px;
+}
+.notfound__ground span:nth-child(2) { background-position: 14px 0, 0 0; }
 
 .noscript {
   padding: 16px;

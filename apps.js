@@ -42,8 +42,9 @@ export const APPS = [
  * there are never dead links on the page. Fill one in and it shows up.
  */
 export const LINKS = {
-  github: 'https://github.com/san-gularity',
-  email: null, // e.g. 'you@example.com'  → adds the Contact chip and footer link
-  resume: null, // e.g. './resume.pdf'     → adds the Resume chip (drop the PDF in this repo)
-  coffee: null, // e.g. 'https://buymeacoffee.com/sanath' → adds the "Buy me a coffee" button
+  github: 'https://github.com/San-gularity',
+  linkedin: 'https://linkedin.com/in/sanath0307',
+  email: 'sanath0307@gmail.com',
+  resume: './resume.pdf',
+  coffee: null, // e.g. 'https://buymeacoffee.com/san' → adds the "Buy me a coffee" button
 };

@@ -67,8 +67,9 @@ function renderShelf() {
   shelf.replaceChildren(...cards);
 
   const count = cards.length;
-  document.querySelector('[data-count]').textContent = `${count} ${count === 1 ? 'cartridge' : 'cartridges'}`;
-  return cards.length;
+  const label = document.querySelector('[data-count]');
+  if (label) label.textContent = `${count} ${count === 1 ? 'cartridge' : 'cartridges'}`;
+  return count;
 }
 
 /** Nav chips and footer links exist only when apps.js gives them a value. */
@@ -80,9 +81,9 @@ function renderLinks() {
 
   const chips = [
     { href: LINKS.resume, label: 'Resume' },
-    { href: LINKS.email ? `mailto:${LINKS.email}` : null, label: 'Contact' },
+    { href: LINKS.linkedin, label: 'LinkedIn' },
     { href: LINKS.github, label: 'GitHub' },
-    { href: APPS.find((app) => /archive/i.test(app.name))?.url, label: 'Archive' },
+    { href: LINKS.email ? `mailto:${LINKS.email}` : null, label: 'Email' },
   ];
   const spacer = nav.querySelector('.nav__spacer');
   for (const chip of chips) {
@@ -97,6 +98,7 @@ function renderLinks() {
 
   const elsewhere = [
     { href: LINKS.github, label: 'GitHub' },
+    { href: LINKS.linkedin, label: 'LinkedIn' },
     { href: LINKS.email ? `mailto:${LINKS.email}` : null, label: 'Email' },
     { href: LINKS.resume, label: 'Resume (PDF)' },
   ];
@@ -112,10 +114,13 @@ function renderLinks() {
 
 function setUpTheme() {
   const button = document.querySelector('[data-theme-toggle]');
-  const label = () => (document.documentElement.dataset.theme === 'light' ? 'Dark' : 'Light');
+  // No attribute means light — that's the default look, so read it that way
+  // rather than comparing against 'light' and mistaking undefined for dark.
+  const current = () => (document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light');
+  const label = () => (current() === 'dark' ? 'Light' : 'Dark');
   button.textContent = label();
   button.addEventListener('click', () => {
-    const next = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
+    const next = current() === 'dark' ? 'light' : 'dark';
     document.documentElement.dataset.theme = next;
     button.textContent = label();
     try {
