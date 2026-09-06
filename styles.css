@@ -22,6 +22,11 @@
   --coin-ink: #a37b00;
   --title-ink: #0b0e14;
   --title-outline: #ffffff;
+  --frame: #0b0e14;
+  --hill: #7ec850;
+  --hill-dark: #4f9c2e;
+  --live-fill: #1f7a34;
+  --live-text: #ffffff;
 
   --px: 'Press Start 2P', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -51,6 +56,11 @@
   --coin-ink: #4a3000;
   --title-ink: #ffffff;
   --title-outline: #0b0e14;
+  --frame: #f3f4f6;
+  --hill: #2f6b34;
+  --hill-dark: #1e4722;
+  --live-fill: #2fa84a;
+  --live-text: #06210d;
 }
 
 *,
@@ -134,9 +144,9 @@ a:hover {
   line-height: 1;
   padding: 10px 12px;
   color: var(--ink);
-  background: transparent;
-  border: 2px solid var(--line);
-  box-shadow: 3px 3px 0 var(--line);
+  background: var(--bg);
+  border: 2px solid var(--frame);
+  box-shadow: 3px 3px 0 var(--frame);
   cursor: pointer;
   transition: color 90ms steps(2, end), border-color 90ms steps(2, end), box-shadow 90ms steps(2, end);
 }
@@ -155,8 +165,10 @@ a:hover {
 .stage {
   position: relative;
   margin: 32px 0 48px;
-  border: 3px solid var(--line);
-  box-shadow: 6px 6px 0 var(--line);
+  /* A hard ink frame reads as a screen edge — the pale border it replaced
+     dissolved into the page. */
+  border: 4px solid var(--frame);
+  box-shadow: 8px 8px 0 var(--accent);
   overflow: hidden;
   background: var(--sky);
 }
@@ -182,6 +194,16 @@ a:hover {
    others would sit behind the title. */
 @media (max-width: 560px) {
   .cloud--b, .cloud--c { display: none; }
+}
+
+.hills {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 108px;
+  color: var(--hill);
+  shape-rendering: crispEdges;
 }
 
 .props {
@@ -256,10 +278,10 @@ a:hover {
   font-family: var(--px);
   font-size: 10px;
   line-height: 1;
-  color: var(--title-ink);
+  color: var(--ink);
   background: var(--bg);
-  border: 2px solid var(--line);
-  box-shadow: 3px 3px 0 var(--line);
+  border: 2px solid var(--frame);
+  box-shadow: 3px 3px 0 var(--frame);
   padding: 8px 10px;
 }
 .stat__coin {
@@ -272,6 +294,7 @@ a:hover {
 .stage__ground {
   position: relative;
   display: grid;
+  border-top: 3px solid var(--frame); /* a definite horizon */
 }
 .stage__ground span {
   display: block;
@@ -363,9 +386,10 @@ a:hover {
   background: transparent;
 }
 .badge--live {
-  color: var(--live);
-  border: 2px solid var(--live);
-  box-shadow: 2px 2px 0 var(--live);
+  color: var(--live-text);
+  background: var(--live-fill);
+  border: 2px solid var(--live-fill);
+  box-shadow: 2px 2px 0 var(--frame);
 }
 .badge--wip {
   color: var(--muted);
@@ -558,6 +582,45 @@ a:hover {
   padding: 16px;
   border: 2px solid var(--line);
   color: var(--muted);
+}
+
+/* ---- the climber that dangles off the cursor ---- */
+
+.climber {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 60;
+  pointer-events: none; /* never intercept a click */
+  overflow: visible;
+  width: 44px;
+  height: 44px;
+  margin: -22px 0 0 -22px;
+  shape-rendering: crispEdges;
+  will-change: transform;
+}
+.climber__rope {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 59;
+  pointer-events: none;
+  overflow: visible;
+  width: 1px;
+  height: 1px;
+}
+.climber__rope line {
+  stroke: var(--frame);
+  stroke-width: 2;
+}
+
+/* No cursor to hang from on a touch screen, and nothing to swing for someone
+   who asked for less motion. */
+@media (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .climber,
+  .climber__rope {
+    display: none !important;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

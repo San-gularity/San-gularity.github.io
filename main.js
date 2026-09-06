@@ -27,14 +27,14 @@ function el(tag, className, text) {
   return node;
 }
 
-function isExternal(href) {
-  return /^https?:/i.test(href) && !href.startsWith(location.origin);
-}
-
 function link(href, className, text) {
   const anchor = el('a', className, text);
   anchor.href = href;
-  if (isExternal(href)) anchor.rel = 'noopener noreferrer';
+  // Everything opens in its own tab so the shelf stays put behind you.
+  // noopener/noreferrer on all of them: target="_blank" otherwise hands the
+  // opened page a handle on this one via window.opener.
+  anchor.target = '_blank';
+  anchor.rel = 'noopener noreferrer';
   return anchor;
 }
 
