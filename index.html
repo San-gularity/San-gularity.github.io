@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#0b0e14">
+  <meta name="description" content="A shelf of browser toys, tools, and half-baked ideas by Sanath.">
+  <title>Sanath's Playground</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <!-- ?v= is a cache buster: bump it on every deploy so nobody gets yesterday's CSS. -->
+  <link rel="stylesheet" href="styles.css?v=2026-09-05">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🕹️</text></svg>">
+
+  <!-- Set the theme before first paint, or the page flashes the wrong one. -->
+  <script>
+    try {
+      var saved = localStorage.getItem('playground:theme');
+      if (saved === 'light' || saved === 'dark') document.documentElement.dataset.theme = saved;
+    } catch (e) { /* storage blocked — dark is the default anyway */ }
+  </script>
+</head>
+<body>
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <div class="wrap">
+    <nav class="nav" data-nav aria-label="Site">
+      <div class="nav__spacer"></div>
+      <button type="button" class="chip chip--muted" data-theme-toggle aria-label="Switch colour theme">Light</button>
+    </nav>
+
+    <header class="hero">
+      <h1 class="hero__title">Sanath's Playground</h1>
+      <p class="hero__lede">A shelf of browser toys, tools, and half-baked ideas.</p>
+    </header>
+
+    <main class="shelf" data-shelf aria-label="Cartridges">
+      <noscript>
+        <p class="noscript">
+          This shelf is built with JavaScript. Without it, here are the direct links:
+          <a href="/FoodBillCalculator/">Split the Bill</a> ·
+          <a href="/San-gularity/">Sans Archive</a>
+        </p>
+      </noscript>
+    </main>
+
+    <footer class="footer">
+      <div class="footer__cols">
+        <div class="footer__col" data-links-shelf>
+          <div class="footer__head">Shelf</div>
+        </div>
+        <div class="footer__col" data-links-elsewhere>
+          <div class="footer__head">Elsewhere</div>
+        </div>
+        <div class="footer__col footer__col--coin" data-links-coin>
+          <div class="footer__head">Insert coin</div>
+          <p class="footer__note" data-coin-note>Everything here is free. Coffee keeps the shelf growing.</p>
+        </div>
+      </div>
+
+      <div class="footer__bottom">
+        <span class="count" data-count>0 cartridges</span>
+        <span class="colophon">Built by Sanath. Hand-written HTML, no trackers.</span>
+      </div>
+    </footer>
+  </div>
+
+  <script type="module" src="main.js?v=2026-09-05"></script>
+</body>
+</html>
