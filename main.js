@@ -115,14 +115,20 @@ function tile(app) {
   const meta = el('div', 'tile__meta');
   if (app.year) meta.append(el('span', 'tile__year', app.year));
   if (app.kind) meta.append(el('span', 'tile__kind', app.kind));
-  if (app.noAi) {
-    const stamp = el('span', 'tile__noai', 'No AI');
-    stamp.title = 'Written without AI assistance';
-    meta.append(stamp);
-  }
   if (meta.childNodes.length) card.append(meta);
 
   if (app.blurb) card.append(el('p', 'tile__blurb', app.blurb));
+
+  // A newspaper-style corner burst, the way old ads shouted "FREE". Two
+  // explicit lines rather than relying on the text wrapping inside the spikes.
+  if (app.noAi) {
+    const stamp = el('span', 'tile__stamp');
+    stamp.title = 'Made without AI assistance';
+    stamp.setAttribute('aria-label', 'Made without AI assistance');
+    stamp.append(el('span', 'tile__stamp-line', 'No'));
+    stamp.append(el('span', 'tile__stamp-line', 'AI'));
+    card.append(stamp);
+  }
 
   const extras = safeLinks(app.links);
   if (extras.length) {
@@ -163,7 +169,8 @@ function renderLinks() {
     const href = safeHref(chip.href);
     // Resume has no card on the shelf any more — this chip is how you reach it,
     // so it gets the filled treatment rather than blending into the row.
-    const cls = chip.label === 'Resume' ? 'chip chip--primary' : 'chip';
+    const TINTED = { Resume: 'chip chip--primary', LinkedIn: 'chip chip--accent', GitHub: 'chip chip--accent' };
+    const cls = TINTED[chip.label] || 'chip';
     if (href) nav.insertBefore(link(href, cls, chip.label), spacer);
   }
 
@@ -207,6 +214,72 @@ function setUpTheme() {
   });
 }
 
+
+/* ---- confetti ----------------------------------------------------------
+   A small burst of pixels wherever you click something. Every card and link
+   opens in a new tab, so the shelf stays put behind you and the burst is
+   actually seen. Particles are driven by the Web Animations API and delete
+   themselves on finish, so nothing accumulates in the DOM. */
+
+const PARTY = ['#7c7cf9', '#ffd83d', '#43c86a', '#d98b4a', '#ff5a5f', '#22e6e6'];
+const reduceMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+let confettiLayer = null;
+function layer() {
+  if (!confettiLayer) {
+    confettiLayer = el('div', 'confetti-layer');
+    confettiLayer.setAttribute('aria-hidden', 'true');
+    document.body.append(confettiLayer);
+  }
+  return confettiLayer;
+}
+
+function burst(x, y) {
+  if (reduceMotion()) return;
+  const host = layer();
+  const count = 18;
+  for (let i = 0; i < count; i += 1) {
+    const bit = el('span', 'confetti-bit');
+    bit.style.left = `${x}px`;
+    bit.style.top = `${y}px`;
+    bit.style.background = PARTY[Math.floor(Math.random() * PARTY.length)];
+    host.append(bit);
+
+    // Fan out evenly, jittered, then let gravity pull the tail down.
+    const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.5;
+    const distance = 50 + Math.random() * 80;
+    const dx = Math.cos(angle) * distance;
+    const dy = Math.sin(angle) * distance + 70;
+    const spin = (Math.random() - 0.5) * 720;
+
+    bit
+      .animate(
+        [
+          { transform: 'translate(-50%, -50%) rotate(0deg) scale(1)', opacity: 1 },
+          { transform: `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) rotate(${spin}deg) scale(0.4)`, opacity: 0 },
+        ],
+        { duration: 650 + Math.random() * 450, easing: 'cubic-bezier(0.2, 0.7, 0.35, 1)' },
+      )
+      .addEventListener('finish', () => bit.remove());
+  }
+}
+
+function setUpConfetti() {
+  document.addEventListener('click', (event) => {
+    const hit = event.target.closest('.tile, .chip, .footer__link, .coffee');
+    if (!hit) return;
+    // Keyboard activation reports 0,0 — burst from the middle of the thing instead.
+    let { clientX: x, clientY: y } = event;
+    if (!x && !y) {
+      const box = hit.getBoundingClientRect();
+      x = box.left + box.width / 2;
+      y = box.top + box.height / 2;
+    }
+    burst(x, y);
+  });
+}
+
 renderShelf();
 renderLinks();
 setUpTheme();
+setUpConfetti();
